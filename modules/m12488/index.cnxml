@@ -1,0 +1,36 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:md="http://cnx.rice.edu/mdml">
+  <title>Motivation behind Iris Detection</title>
+  <metadata><md:content-id>undefined</md:content-id><md:title/><md:uuid>a5313320-557d-4c4d-a61c-e19760950896</md:uuid>
+</metadata>
+
+  <content>
+     <section id="introsec1">
+      <title>Passwords are Bad</title>
+          <para id="mod1para1">
+Pin numbers, email passwords, credit card numbers, and protected premises access numbers all have something in common.  All of them are a key to your identity, and all of them can easily be stolen or guessed after reading the first few pages of "Identity Theft for Dummies".
+          </para>  
+          <para id="mod1para2">
+Currently users have been encouraged to create strong passwords for every different domain.  This leads to some logical problems.  People tend to forget multiple, lengthy and varied passwords, therefore, they use one strong password for everything.  This only allows the successful thief to gain access to all the protected information.  The other option which follows is to carry a hard copy of each password which again can only be a reward for the quick pick-pocket.
+          </para>
+          <para id="mod1para3">
+Only recently have companies started to use biometric authentication to protect access to highly confidential assets.  You may be familiar with some of the physical traits used by biometric authentication programs such as fingerprints and retinas.  Other traits that can be measured include the voice, face, and the iris.  For most people, these are only high-tech gadgets simulated in hollywood.  However, this technology is very real and is currently being used in the private sector.  One method of particular interest is the use of iris codes to authenticate users.  
+          </para> 
+      </section>
+<figure id="eye_pic1">
+	<media id="idm2218192" alt=""><image src="../../media/sampleiris.jpg" mime-type="image/jpeg"/></media>
+      <caption>
+	The Eye <link url="http://www.icdri.org/biometrics/iris_biometrics.htm">www.icdri.org</link>
+      </caption>
+    </figure>
+
+       <section id="introsec2">
+        <title>Enter: Iris Detection</title>
+           <para id="mod1para4">
+Iris detection is one one of the most accurate and secure means of biometric identification while also being one of the least invasive.  Fingerprints of a person can be faked--dead people can come to life by using a severed thumb.  Thiefs can  don a nifty mask to fool a simple face recognition program.  The iris has many properties which make it the ideal biometric recognition component. 
+           </para>
+           <para id="mod1para5">
+The iris has the unique characteristic of very little variation over a life's period yet a multitude of variation between individuals.  Irises not only differ between identical twins, but also between the left and right eye.  Because of the hundreds of degrees of freedom the iris gives and the ability to accurately measure the textured iris, the false accept probability can be estimated at 1 in 10^31.  Another characteristic which makes the iris difficult to fake is its responsive nature.  Comparisons of measurements taken a few seconds apart will  detect a change in iris area if the light is adjusted--whereas a contact lens or picture will exhibit zero change and flag a false input.
+           </para>
+        </section>  
+  </content>  
+</document>

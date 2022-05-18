@@ -1,0 +1,136 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:md="http://cnx.rice.edu/mdml">
+  <title>Iris Recognition: Detecting the Iris</title>
+  <metadata><md:content-id>undefined</md:content-id><md:title/><md:uuid>5e3404ea-b065-45c8-9375-067d7723d793</md:uuid>
+</metadata>
+
+  <content>
+    <section id="iris_sec1">
+      <title>Iris Detection</title>
+      <para id="para1">
+With the information on the pupil discovered the location of the iris can now begin.  It is important to note that the pupil and iris are not concentric.  Consequently, the pupil information does not help directly determine the same parameters for the iris.  However, the pupil information does give a good starting point, the pupil center.
+      </para>
+      <para id="para2">
+Most modern iris detection algorithms use random circles to determine the iris parameters.  Having a starting point at the pupil, these algorithms guess potential iris centers and radii.  They then integrate over the circumference in order to determine if it is on the border of the iris.  While this is highly accurate the process can consume a lot of time.  This module explains an alternate approach which is much more lightweight but with higher error rates.
+      </para>
+    </section>
+    <section id="iris_sec2">
+      <title>Iris Radius Approximation</title>
+      <para id="para3">
+The first step in finding the actual iris radius is to find an approximation of the iris radius.  This approximation can then be fine tuned to find the actual iris parameters.  In order to find this approximation a single edge of the iris must be found.  Knowing that eyes are most likely to be distorted in the top and bottom parts due to eyelashes and eyelids, the best choice for finding an unobstructed edge is along the horizontal line through the pupil center.
+      </para>
+      <para id="para4">
+Having decided on where to attempt to detect the iris edge, the question of how to do it arises.  It seems obvious that some type of edge detection should be used.  It happens that for any edge detection it is a good idea to blur the image to subtract any noise prior to running the algorithm, but too much blurring can dilate the boundaries of an edge, or make it very difficult to detect.  Consequently, a special smoothing filter such as the <term>median filter</term> should be used on the original image.  This type of eliminates sparse noise while preserving image boundaries.  The image may need to have its contrast increased after the median filter.
+      </para>
+      <figure id="iris_pic1">
+        <subfigure id="sub1">
+	   <media id="idm22160" alt=""><image src="../../media/original_image-b307.png" mime-type="image/png"/></media>
+        </subfigure>
+        <subfigure id="sub2">
+           <media id="idm7258544" alt=""><image src="../../media/median_filter.png" mime-type="image/png"/></media>
+        </subfigure>
+        <caption>
+The original image after running through a median filter.  A median filter works by assigning to a pixel the median value of its neighnors.
+        </caption>
+      </figure>
+      <para id="par5">
+Now that the image is prepped the edge detection can be done.  Since there is such a noticeable rising edge in luminescence at the edge of the iris, filtering with a <term>haar wavelet</term> should act as a simple edge detector.  The area of interest is not just the single horizontal line through the iris, but the portion of that line to the left of the pupil.  This is so that the rising luminescence from the transition from iris to white is the only major step.
+      </para>
+      <figure orient="vertical" id="iris_pic2">
+        <subfigure id="sub3">
+          <media id="idp464464" alt=""><image src="../../media/haar_wavelet.png" mime-type="image/png"/></media>
+          <caption>
+Haar Wavelet
+          </caption>
+        </subfigure>
+        <subfigure id="sub4">
+          <media id="idp102336" alt=""><image src="../../media/image_vector.png" mime-type="image/png"/></media>
+          <caption>
+The area of interest
+          </caption>
+        </subfigure>
+        <subfigure id="sub5">
+          <media id="idm7645040" alt=""><image src="../../media/image_haar.png" mime-type="image/png"/></media>
+          <caption>
+The area of interest after filtering with the haar wavelet
+          </caption>
+        </subfigure>
+        <caption>
+By filtering the area of interest with a haar wavelet all rises in luminence are transformed into high valued components of the output.  The sharpness of change in luminence affects the overall height of the component.
+        </caption>
+      </figure>
+      <para id="para6">
+The iris should represent the steepest luminence change in the area of interest.    Consequently, this area of the image should correspond to the highest valued componenet of the the output from the filter.  By finding this maximal value the  edge of the iris to the right of the pupil should be found.  It should be noted that since the iris may not be concentric with the pupil the distance from the pupil center to this edge may not correspond to the iris' radius.  
+      </para>
+      <figure id="iris_pic3">
+        <media id="idp1395856" alt=""><image src="../../media/radius_guess.png" mime-type="image/png"/></media>
+        <caption>
+The green point is the pupil center found using the pupil detection techniques of part 1.  The red point indicates the starting point of the area of interest.  The blue point is the approximate radius found.  The yellow point is the padded radius for use in finding the actual iris parameters.
+        </caption>
+      </figure>
+    </section>
+    <section id="iris_sec3">
+      <title>Iris Translation</title>
+      <para id="para7">
+Having acquired an approximate radius, a small pad of this value should produce a circle centered on the pupil which contains the entire iris.  Furthermore, with the perimeter of the pupil known, an annulus may be formed which should have the majority of it's area filled by the iris.  This annulus can then be unrolled into cartestian coordinates through a straight discretized transformation. (r --&gt; y, θ --&gt; x) The details of this procedure are described in Step 3.
+      </para>
+      <para id="para8">
+If the iris is perfectly centered on the pupil, the unrolled image should have a perfectly straight line along its top.  However, if the iris is off center even a little this line will be wavy.  The line represents the overall distance the iris is at from the pupil center.  It is this line which will help to determine the iris' center and radius.  Consequently, an edge detection algorith m must be run on the strip in order to determine the line's exact location.  Once again <term>canny edge detection</term> is used.  However, before the edge detection can be run the image should undergo some simple pre-processing to increase the contrast of the line.  This will allow for a higher thresholding on the edge detection to eliminate extraneous data.
+      </para>
+      <figure orient="vertical" id="iris_pic4">
+        <subfigure id="sub6">
+          <media id="idp1745152" alt=""><image src="../../media/iris_unroll.png" mime-type="image/png"/></media>
+        </subfigure>
+        <subfigure id="sub7">
+          <media id="idp1746992" alt=""><image src="../../media/iris_edge.png" mime-type="image/png"/></media>
+        </subfigure>
+        <caption>
+The unrolled iris before and after edge detection
+        </caption>
+      </figure>
+    </section>
+    <section id="iris_sec4">
+      <title>Iris Information Extraction</title>
+      <para id="para9">
+In order to extrapolate the iris' center and radius, two chords of the actual iris through the pupil must be found.  This can be easily accomplished with the information gained in the previous step.  By examing points with x values on the strip offset by half of the length of the strip a chord of the iris is formed through the pupil center.  It is important to pick the vectors for these chords so they are both maximally independent of each other, while also being far from areas where eyelids or eyelashes may interfere.
+      </para>
+      <figure orient="vertical" id="iris_pic5">
+        <subfigure id="sub8">
+          <media id="idp5355248" alt=""><image src="../../media/iris_extrapolate.png" mime-type="image/png"/></media>
+        </subfigure>
+        <subfigure id="sub9">
+          <media id="idp5357168" alt=""><image src="../../media/image_extrapolate.png" mime-type="image/png"/></media>
+        </subfigure>
+        <caption>
+The points selected on the strip to form the chords of the iris through the pupil
+        </caption>
+      </figure>
+      <para id="para10">
+The center of the iris can be computed by examining the shift vectors of the chords.  By looking at both sides of a chord and comparing their lengths an offset can be computed.  If the center was shifted by this vector it would equalize the two components of the chord.  By doing this with both of the chords two different offset vectors can be computed.  However, by just shifting the center through both of these vectors some components of shift will be overcompensated for due to the vectors not being orthogonal.  Thus, the center should be shifted through the first vector, and the orthogonal component of the second to the first.
+      </para>
+      <figure id="iris_pic6">
+        <media id="idm8545360" alt=""><image src="../../media/orthogonal_vector.png" mime-type="image/png"/></media>
+        <caption>
+The change vectors (black) represent the shift of the pupil (black circle) in order to find the iris center.  By just adding the vectors (blue vector) the result (blue circle) is offset by any vector the two change vectors share.  Consequently, by adding the orthogonal component (gray vector) of one vector to the other (red vector), the actual iris center (red circle) is found.
+        </caption>
+      </figure>
+      <para id="para11">
+The diameter of the iris can now be estimated by simply averaging the two diameters of the chords.  While this is not a perfect estimate, that would require a single chord through the iris center, it is a very good approximation.
+      </para>
+      <figure id="iris_pic7">
+        <media id="idp5138048" alt=""><image src="../../media/iris_parameters.png" mime-type="image/png"/></media>
+        <caption>
+The pupil center and perimeter, along with the original estimate of the iris perimeter and the determined iris center and perimeter
+        </caption>
+      </figure>
+    </section>
+    <section id="iris_sec5">
+      <title>Possible Improvements</title>
+      <para id="para12">
+Currently the algorithm only examines two static vectored chords.  While these were chosen to work best within the maximal orthogonality and minimal eyelash/eyelid interference constraint there are still many cases where they do not work.  It is possible for someone to have the entire upper half of their iris covered and still have the rest of the iris code generation work since less then half of the iris surface is needed for an identification.  Of course, if half of the eye is shut the chords will not intersect the iris edge and no result will occur.  Instead of these static vectors for chords, an adaptive algorithm could be used which starts from the eye center and works progressively through angles to find points near the eyelid interference region.  In this case the orthogonality would be maximized for that eye while still finding points on the iris edge.
+      </para>
+      <para id="para13">
+Most modern iris detection algorithms produce what is known as an iris mask.  This mask represents the portion of the iris obstructed by the eyelid or eyelash.  This portion can then be ignored when doing the iris code comparison.  In this way a user is not penalized for blocking a portion of their iris in the overall authentication.  This takes advantage of the need for only a fraction of the iris for identification.  The algorithm described in this module does not currently produce a mask.  One way in which a mask could be produced is during the iris extrapolation.  After unrolling the iris the presence of discontinuities in the line across the top the eyelids or eyelashes could be detected and a mask could be returned showing them.  Another way a mask could be generated is through the running of a edge detector around the edge of the computed iris.  In this way all sections of the perimeter which are messy could be found and masked.
+      </para>
+    </section>
+  </content>
+</document>

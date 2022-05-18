@@ -1,0 +1,478 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:md="http://cnx.rice.edu/mdml">
+  <title>Iris Recognition: Unwrapping the Iris</title>
+  <metadata><md:content-id>undefined</md:content-id><md:title/><md:uuid>c4e547ce-ae0a-41b1-88a0-0766abcdf5e6</md:uuid>
+</metadata>
+
+  <content>
+     <section id="unwrap1">
+      <title>Why is unwrapping needed?</title>
+         <para id="para1">
+Image processing of the iris region is computationally expensive. In addition the area of interest in the image is a 'donut' shape, and grabbing pixels in this region requires repeated rectangular-to-polar conversions. To make things easier, the iris region is first unwrapped into a rectangular region using simple trigonometry. This allows the iris decoding algorithm to address pixels in simple (row,column) format. 
+         </para> 
+      </section>
+
+<section id="unwrap2">
+<title>Asymmetry of the eye</title>
+<para id="para2">
+Although the pupil and iris circles appear to be perfectly concentric, they rarely are. In fact, the pupil and iris regions each have their own bounding circle radius and center location. This means that the unwrapped region between the pupil and iris bounding does not map perfectly to a rectangle. This is easily taken care of with a little trigonometry. 
+</para>
+
+<para id="para3">
+There is also the matter of the pupil, which grows and contracts its area to control the amount of light entering the eye. Between any two images of the same person's eye, the pupil will likely have a different radius. When the pupil radius changes, the iris stretches with it like a rubber sheet. Luckily, this stretching is almost linear, and can be compensated back to a standard dimension before further processing.
+</para>
+
+        </section>
+
+<section id="unwrap3">
+<title>The unwrapping algorithm</title>
+<para id="para4">
+ 
+In figure1, points Cp and Ci are the detected centers of the pupil and iris respectively. We extend a wedge of angle <m:math><m:ci>dθ</m:ci></m:math> starting at an angle <m:math><m:ci>θ</m:ci></m:math>, from both points Cp and Ci, with radii Rp and Ri, respectively. The intersection points of these wedges with the pupil and iris circles form a skewed wedge polygon <m:math><m:ci>P1 P2 P3 P4</m:ci></m:math>. The skewed wedge is subdivided radially into N blocks. and the image pixel values in each block are averaged to form a pixel (j,k) in the unwrapped iris image, where j is the current angle number and k is the current radius number.
+</para>
+
+<figure id="funwrap1">
+<media id="idm6131312" alt=""><image src="../../media/Unwrap1.jpg" mime-type="image/jpeg"/></media>
+<caption>
+Algorithm for unwrapping the iris region.
+</caption>
+</figure> 
+
+<para id="para5">
+For this project, the standard dimensions of the extracted iris rectangle are 128 rows and 8 columns (see Figure 4). This corresponds to N=128 wedges, each of angle <m:math> <m:mfrac>  <m:mrow>   <m:mn>2</m:mn> <m:mo>π</m:mo> </m:mrow> <m:mn>128</m:mn> </m:mfrac> </m:math>, with each wedge divided radially into 8 sections. The equations below define the important points marked in Figure 1. Points Pa through Pd are interpolated along line segments P1-P3 and P2-P4.
+</para>
+
+<para id="para6">
+  <m:math display="block">
+	    <m:apply>
+	      <m:eq/>
+	         <m:apply>	        
+			<m:ci>
+	                 <m:msub>
+	                     <m:mi>P</m:mi>
+	                     <m:mn>1</m:mn>
+	                 </m:msub>
+	                </m:ci>
+	         </m:apply>
+	      <m:apply>
+                  <m:plus/>
+                    <m:ci>Cp</m:ci>
+                    <m:apply>
+                       <m:times/>
+                         <m:ci>Rp</m:ci>
+                         <m:apply>
+                            <m:minus/>
+	                      <m:apply>
+	                        <m:cos/>
+	                        <m:ci>θ</m:ci>
+	                      </m:apply>
+	                      <m:apply>
+	                        <m:sin/>
+	                        <m:ci>θ</m:ci>
+	                      </m:apply>
+ 	                  </m:apply>
+	             </m:apply>
+                  </m:apply>       
+ 	</m:apply>
+         
+</m:math>
+
+ <m:math display="block">
+	    <m:apply>
+	      <m:eq/>
+	         <m:apply>	        
+			<m:ci>
+	                 <m:msub>
+	                     <m:mi>P</m:mi>
+	                     <m:mn>2</m:mn>
+	                 </m:msub>
+	                </m:ci>
+	         </m:apply>
+	      <m:apply>
+                  <m:plus/>
+			<m:ci>
+	                 <m:msub>
+	                     <m:mi>C</m:mi>
+	                     <m:mn>p</m:mn>
+	                 </m:msub>
+	                </m:ci>
+                    <m:apply>
+                       <m:times/>
+	                <m:ci>
+	                 <m:msub>
+	                     <m:mi>R</m:mi>
+	                     <m:mn>p</m:mn>
+	                 </m:msub>
+	                </m:ci>
+                         <m:apply>
+                            <m:minus/>
+	                      <m:apply>
+	                        <m:cos/>
+	                          <m:apply>
+                                      <m:plus/>
+	                                  <m:ci>θ</m:ci>
+	                                  <m:ci>dθ</m:ci>
+	                           </m:apply>
+	                      </m:apply>
+	                      <m:apply>
+	                        <m:sin/>
+                                    <m:apply>
+                                      <m:plus/>
+	                                  <m:ci>θ</m:ci>
+	                                  <m:ci>dθ</m:ci>
+	                           </m:apply>
+	                      </m:apply>
+ 	                  </m:apply>
+	             </m:apply>
+                  </m:apply>       
+ 	</m:apply>         
+</m:math>
+  <m:math display="block">
+	    <m:apply>
+	      <m:eq/>
+	         <m:apply>	        
+			<m:ci>
+	                 <m:msub>
+	                     <m:mi>P</m:mi>
+	                     <m:mn>3</m:mn>
+	                 </m:msub>
+	                </m:ci>
+	         </m:apply>
+	      <m:apply>
+                  <m:plus/>
+                    <m:ci>Ci</m:ci>
+                    <m:apply>
+                       <m:times/>
+                         <m:ci>Ri</m:ci>
+                         <m:apply>
+                            <m:minus/>
+	                      <m:apply>
+	                        <m:cos/>
+	                        <m:ci>θ</m:ci>
+	                      </m:apply>
+	                      <m:apply>
+	                        <m:sin/>
+	                        <m:ci>θ</m:ci>
+	                      </m:apply>
+ 	                  </m:apply>
+	             </m:apply>
+                  </m:apply>       
+ 	</m:apply>
+         
+</m:math>
+
+ <m:math display="block">
+	    <m:apply>
+	      <m:eq/>
+	         <m:apply>	        
+			<m:ci>
+	                 <m:msub>
+	                     <m:mi>P</m:mi>
+	                     <m:mn>4</m:mn>
+	                 </m:msub>
+	                </m:ci>
+	         </m:apply>
+	      <m:apply>
+                  <m:plus/>
+			<m:ci>
+	                 <m:msub>
+	                     <m:mi>C</m:mi>
+	                     <m:mn>i</m:mn>
+	                 </m:msub>
+	                </m:ci>
+                    <m:apply>
+                       <m:times/>
+	                <m:ci>
+	                 <m:msub>
+	                     <m:mi>R</m:mi>
+	                     <m:mn>i</m:mn>
+	                 </m:msub>
+	                </m:ci>
+                         <m:apply>
+                            <m:minus/>
+	                      <m:apply>
+	                        <m:cos/>
+	                          <m:apply>
+                                      <m:plus/>
+	                                  <m:ci>θ</m:ci>
+	                                  <m:ci>dθ</m:ci>
+	                           </m:apply>
+	                      </m:apply>
+	                      <m:apply>
+	                        <m:sin/>
+                                    <m:apply>
+                                      <m:plus/>
+	                                  <m:ci>θ</m:ci>
+	                                  <m:ci>dθ</m:ci>
+	                           </m:apply>
+	                      </m:apply>
+ 	                  </m:apply>
+	             </m:apply>
+                  </m:apply>       
+ 	</m:apply>         
+</m:math>
+</para> 
+
+<para id="para7">
+<m:math display="block">
+ <m:apply>
+   <m:eq/>
+      <m:apply>	        
+	<m:ci>
+            <m:msub>
+                <m:mi>P</m:mi>
+                 <m:mn>a</m:mn>
+               </m:msub>
+            </m:ci>
+         </m:apply>
+<m:apply>
+<m:plus/>
+         <m:apply>
+              <m:times/>
+		<m:ci>
+	          <m:msub>
+	             <m:mi>P</m:mi>
+	             <m:mn>1</m:mn>
+	          </m:msub>
+	        </m:ci>
+        <m:apply>
+             <m:minus/>
+	         <m:cn>1</m:cn>
+                    <m:apply>
+                         <m:divide/>
+	                 <m:mi>k</m:mi>
+	                 <m:mi>N</m:mi>
+	             </m:apply>
+	   </m:apply>
+   </m:apply>	
+<m:apply>
+<m:divide/>
+<m:apply>
+<m:times/>
+		<m:ci>
+                 <m:msub>
+                     <m:mi>P</m:mi>
+                     <m:mn>3</m:mn>
+                 </m:msub>
+                </m:ci>
+<m:mi>k</m:mi>               
+</m:apply>
+<m:mi>N</m:mi>
+</m:apply>
+</m:apply>         
+</m:apply>          
+</m:math>
+
+
+<m:math display="block">
+ <m:apply>
+   <m:eq/>
+      <m:apply>	        
+	<m:ci>
+            <m:msub>
+                <m:mi>P</m:mi>
+                 <m:mn>b</m:mn>
+               </m:msub>
+            </m:ci>
+         </m:apply>
+<m:apply>
+<m:plus/>
+         <m:apply>
+              <m:times/>
+		<m:ci>
+	          <m:msub>
+	             <m:mi>P</m:mi>
+	             <m:mn>1</m:mn>
+	          </m:msub>
+	        </m:ci>
+        <m:apply>
+             <m:minus/>
+	         <m:cn>1</m:cn>
+                    <m:apply>
+                         <m:divide/>
+<m:apply>
+<m:plus/>
+<m:mi>k</m:mi>
+<m:cn>1</m:cn>
+</m:apply>
+	                 <m:mi>N</m:mi>
+	             </m:apply>
+	   </m:apply>
+   </m:apply>	
+<m:apply>
+<m:divide/>
+<m:apply>
+<m:times/>
+		<m:ci>
+                 <m:msub>
+                     <m:mi>P</m:mi>
+                     <m:mn>3</m:mn>
+                 </m:msub>
+                </m:ci>
+<m:apply>
+<m:plus/>
+<m:mi>k</m:mi>
+<m:cn>1</m:cn>
+</m:apply>              
+</m:apply>
+<m:mi>N</m:mi>
+</m:apply>
+</m:apply>         
+</m:apply>          
+</m:math> 
+
+<m:math display="block">
+ <m:apply>
+   <m:eq/>
+      <m:apply>	        
+	<m:ci>
+            <m:msub>
+                <m:mi>P</m:mi>
+                 <m:mn>c</m:mn>
+               </m:msub>
+            </m:ci>
+         </m:apply>
+<m:apply>
+<m:plus/>
+         <m:apply>
+              <m:times/>
+		<m:ci>
+	          <m:msub>
+	             <m:mi>P</m:mi>
+	             <m:mn>2</m:mn>
+	          </m:msub>
+	        </m:ci>
+        <m:apply>
+             <m:minus/>
+	         <m:cn>1</m:cn>
+                    <m:apply>
+                         <m:divide/>
+	                 <m:mi>k</m:mi>
+	                 <m:mi>N</m:mi>
+	             </m:apply>
+	   </m:apply>
+   </m:apply>	
+<m:apply>
+<m:divide/>
+<m:apply>
+<m:times/>
+		<m:ci>
+                 <m:msub>
+                     <m:mi>P</m:mi>
+                     <m:mn>4</m:mn>
+                 </m:msub>
+                </m:ci>
+<m:mi>k</m:mi>               
+</m:apply>
+<m:mi>N</m:mi>
+</m:apply>
+</m:apply>         
+</m:apply>          
+</m:math>
+
+<m:math display="block">
+ <m:apply>
+   <m:eq/>
+      <m:apply>	        
+	<m:ci>
+            <m:msub>
+                <m:mi>P</m:mi>
+                 <m:mn>d</m:mn>
+               </m:msub>
+            </m:ci>
+         </m:apply>
+<m:apply>
+<m:plus/>
+         <m:apply>
+              <m:times/>
+		<m:ci>
+	          <m:msub>
+	             <m:mi>P</m:mi>
+	             <m:mn>2</m:mn>
+	          </m:msub>
+	        </m:ci>
+        <m:apply>
+             <m:minus/>
+	         <m:cn>1</m:cn>
+                    <m:apply>
+                         <m:divide/>
+<m:apply>
+<m:plus/>
+<m:mi>k</m:mi>
+<m:cn>1</m:cn>
+</m:apply>
+	                 <m:mi>N</m:mi>
+	             </m:apply>
+	   </m:apply>
+   </m:apply>	
+<m:apply>
+<m:divide/>
+<m:apply>
+<m:times/>
+		<m:ci>
+                 <m:msub>
+                     <m:mi>P</m:mi>
+                     <m:mn>4</m:mn>
+                 </m:msub>
+                </m:ci>
+<m:apply>
+<m:plus/>
+<m:mi>k</m:mi>
+<m:cn>1</m:cn>
+</m:apply>              
+</m:apply>
+<m:mi>N</m:mi>
+</m:apply>
+</m:apply>         
+</m:apply>          
+</m:math> 
+
+<figure id="funwrap2">
+<subfigure id="sub1">
+<media id="idp3295584" alt=""><image src="../../media/Unwrap2.jpg" mime-type="image/jpeg"/></media>
+</subfigure>
+<subfigure id="sub2">
+<media id="idp3297232" alt=""><image src="../../media/Unwrap_180_73.jpg" mime-type="image/jpeg"/></media>
+</subfigure>
+<subfigure id="sub3">
+<media id="idp2186544" alt=""><image src="../../media/Unwrap_128_8.jpg" mime-type="image/jpeg"/></media>
+</subfigure>
+<caption>
+(2.1) Detected iris and pupil circles. (2.2) Iris extracted into 180 angle divisions, 73 radius divisions. (2.3) Iris extracted into 128 angle divisions, 8 radius divisions.
+</caption>
+</figure> 
+</para>
+</section>
+
+<section id="unwrap5">
+<title>Masking of Extraneous Regions</title>
+<para id="para8">
+Subfigure 2.2 demonstrates a high-resolution unwrapping. Note the large eyelid regions at the top and bottom of the image. These are the areas inside the iris circle that are covered by an eyelid. These regions do not contain any useful data and need to be discarded. One way to do this is to detect regions of the image that are unneeded and note the position of pixels within the region. Then, when the iris pattern is decoded and compared to another image, only regions that are marked "useful" in both images are considered.
+</para>
+
+<para id="para9">
+A less robust method of ignoring the eyelid regions is to extract the inner 60% of the region between the pupil and iris. This assumes that an eyelid within this 50% will be detected before unwrapping and the image will be discarded. While simpler to implement, this method has the drawback that less iris data is extracted for comparison.
+</para>
+</section>
+     <section id="unwrap6">
+      <title>Contrast adjustment</title>
+         <para id="para10">
+Notice that subfigures 2.2 and 2.3 appear to be better contrasted than subfigure 2.1. These images have been equalized in contrast to maximize the range of luminance values in the iris image. This makes it numerically easier to encode the iris data. The equalizing is done by acquiring a luminance histogram of the image and stretching the upper and lower boundaries of the histogram to span the entire range of luminance values 0-255. Figure 3 demonstrates an example of this process.
+         </para> 
+
+<figure id="funwrap3">
+<subfigure id="sub4">
+<media id="idp3116816" alt=""><image src="../../media/Unwrap3cadj.jpg" mime-type="image/jpeg"/></media>
+</subfigure>
+<subfigure id="sub5">
+<media id="idp3118656" alt=""><image src="../../media/Unwrap4cadj.jpg" mime-type="image/jpeg"/></media>
+</subfigure>
+<caption>
+(3.1) Poor contrasted image and luminance histogram (2.2) Image transformed by stretching the luminance histogram.
+</caption>
+</figure> 
+
+      </section>
+
+</content>
+  
+</document>

@@ -1,0 +1,72 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:md="http://cnx.rice.edu/mdml">
+  <title>Iris Recognition: Detecting the Pupil</title>
+  <metadata><md:content-id>undefined</md:content-id><md:title/><md:uuid>a9456599-1aca-485b-a4f0-990487fc342a</md:uuid>
+</metadata>
+
+  <content>
+     <section id="pupil_sec1">
+      <title>Acquiring the Picture</title>
+         <para id="para1">
+Beginning with a 320x280 pixel photograph of the eye taken from 4 cenimeters away using a near infrared camera.  The near infrared spectrum emphasizes the texture patterns of the iris making the measurements taken during iris recognition more precise.  All images tested in this program were taken from the <term>Chinese Academy of Sciences Institute of Automation (CASIA)</term> iris database.
+         </para> 
+<figure id="pupil_pic1">
+	<media id="idp3051840" alt=""><image src="../../media/original_image-052d.png" mime-type="image/png"/></media>
+     <caption>
+           Near-infrared image of eye from CASIA Database
+     </caption>
+</figure> 
+       </section>
+     <section id="pupil_sec2">
+      <title>Edge Detection</title>
+         <para id="para2">
+Since the picture was acquired using an infrared camera the pupil is a very distinct black circle.  The pupil is in fact so black relative to everything else in the picture a simple edge detection should be able to find its outside edge very easily.  Furthermore, the thresholding on the edge detection can be set very high as to ignore smaller less contrasting edges while still being able to retrieve the entire perimeter of the pupil.
+          </para>
+          <para id="para3">
+The best edge detection algorithm for outlining the pupil is <term>canny edge detection</term>.  This algorithm uses horizontal and vertical gradients in order to deduce edges in the image.  After running the canny edge detection on the image a circle is clearly present along the pupil boundary.
+          </para>
+          <figure id="pupil_pic2">
+            <media id="idp3255488" alt=""><image src="../../media/canny_filter.png" mime-type="image/png"/></media>
+            <caption>
+              Canny edge detected image of the eye
+            </caption>
+          </figure>
+        </section>
+
+     <section id="pupil_sec3">
+        <title>Image Clean Up</title>
+           <para id="para4">
+A variety of other filters can be used in order decrease the extraneous data found in the edge detection stage.  The first step in cleaning up the image is to dilate all the edge detected lines.  By increasing the size of the lines nearby edge detected components are likely to coalesce into a larger line segment.  In this way complete edges not fully linked by the edge detector can form.  Thus the dilation will give us a higher probability that the perimeter of the pupil is a complete circle.  
+           </para>
+           <para id="para5">
+Knowing that the pupil is well defined more filters can be used without fear of throwing out that important information.  Assuming the image is centered a filter can be used to fill in the circle defined by the pupil's perimeter.  In this way we clearly define the entire area of the pupil.  After this, a filter which simply throws out sections of connected pixels with an area below a threshold can be used effectively to throw out smaller disconnected parts of the image the edge detector found.  Finally, any holes in the pupil caused by reflections or other distortions can be filled, by looking for sections of blank pixels with an area below a threshold.  After this processing we achieve a picture that highlights the pupil area while being fairly clean of extraneous data.
+           </para>
+          <figure id="pupil_pic3">
+            <media id="idp2747360" alt=""><image src="../../media/other_filters.png" mime-type="image/png"/></media>
+            <caption>
+              Image after final filters
+            </caption>
+          </figure>
+         </section>
+    <section id="pupil_sec4">
+      <title>Pupil Information Extraction</title>
+      <para id="para6">
+Having pre-processed the image sufficiently the extraction of the pupil center and radius can begin.  By computing the euclidean distance from any non-zero point to the nearest zero valued point an overall spectrum can be found.  This spectrum shows the largest filled circle that can be formed within a set of pixels.  Since the pupil is the largest filled circle in the image the overall intensity of this spectrum will peak in it.
+      </para>
+      <figure id="pupil_pic4">
+        <media id="idp2400672" alt=""><image src="../../media/euclid_filter.png" mime-type="image/png"/></media>
+        <caption>
+          Image after computing minimal euclidean distance to non-white pixel
+        </caption>
+      </figure>
+      <para id="para7">
+In the pupil circle the exact center will have the highest value.  This is due to the simple fact that the center is the one point inside the circle that is farthest from the edges of the circle.  Thus the maximum value must correspond to the pupil center, and furthermore the value at that maximum (distance from that point to nearest non-zero) must be equal to the pupil radius.
+      </para>
+      <figure id="pupil_pic5">
+        <media id="idp2591520" alt=""><image src="../../media/pupil_center.png" mime-type="image/png"/></media>
+        <caption>
+          The original image of the eye with the pupil center and perimeter, found with the algorithm, highlighted
+        </caption>
+      </figure>
+    </section>
+  </content>
+</document>

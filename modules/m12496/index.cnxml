@@ -1,0 +1,62 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:md="http://cnx.rice.edu/mdml">
+  <title>Iris Recognition: The I Team</title>
+  <metadata><md:content-id>undefined</md:content-id><md:title/><md:uuid>a652710c-9a54-4494-902f-006885cfdd99</md:uuid>
+</metadata>
+
+ 
+  <content>
+       <section id="intropeeps1">
+        <title>Bryan Lipinski</title>
+    <para id="bryanpara">
+<figure id="bryanpic">
+	<media id="idm9786112" alt=""><image src="../../media/bryan.jpg" mime-type="image/jpeg"/></media>
+<caption>Bryan Lipinski at work</caption>
+
+
+    </figure>
+Bryan is a Jones College senior at Rice University.  As far as the project, he had his hand in almost all the programming but mainly detecting the iris.  Bryan loves to write computer code and calculate Fast Fourier Transforms as evident by his double major of computer science and electrical engineering.  When he is not at his computer, he loves to hit the slopes back at home in Colorado.  An expert snowboarder, he is proud of his most recent board purchase the Ice Slider 4000. After he graduates in the fall of 2004, he is headed to the rainy coast of Washington to fullfill a life-long dream of working for Bill Gates. 
+    </para>
+</section> 
+       <section id="intropeeps2">
+        <title>David Carr</title>
+    <para id="davidpara">
+
+<figure id="dave">
+	<media id="idm8233360" alt=""><image src="../../media/dcarr.jpg" mime-type="image/jpeg"/></media>
+<caption>David working on HAM radio</caption>
+    </figure>
+
+The youngest group member at sophomore status is David Carr. Normally a hardware man, David worked on coding up the Gabor filter as well as the actual iris code generation--both daunting tasks in which he succeeded.  In his spare time, David enjoys skateboarding with fellow group member, Paul.  In addition, he has particular interest in HAM radios.  David can be found most of the time in the lab or in his room either soldering or programing on his beloved Unix machine.
+</para>
+</section>
+         <section id="intropeeps3">
+        <title>Dmitry Khabashesku</title>
+    <para id="dmitry2">
+
+<figure id="dmitry">
+	<media id="idm8583744" alt=""><image src="../../media/dmitry.jpg" mime-type="image/jpeg"/></media>
+<caption>Dmitry working hard</caption>
+    </figure>
+Mr. Khabashesku is a junior electrical engineering student at Rice University.  His project responsibilities consisted of finding the pupil and unwrapping the iris into cartesian coordinates.  A difficult task he completed quite well.  Mr. Khabashesku's first love is electronic music.  In his spare time he tries to complete his project of building an analog synthesizer.  A transfer from UT, he has enjoyed the smaller more personal campus of Rice.  Here he has found many people like himself in the dense gaming community around school.  
+
+</para>
+</section>
+
+         <section id="intropeeps4">
+        <title>Paul Robichaux</title>
+    <para id="paul2">
+
+<figure id="paul">
+	<media id="idm8597104" alt=""><image src="../../media/paul.jpg" mime-type="image/jpeg"/></media>
+<caption>Paul Robichaux confused</caption>
+</figure>
+
+Paul Robichaux is a 5th year electrical engineering senior at Rice University.  Most of his efforts were focused on managing the team and heading up the poster presentation for the project as well as the connexions write-up.  Paul hails from Lake Charles, Louisiana but was a transfer from Huntsville, Alabama.  He enjoys reading various science journals in his spare time in addition to skateboarding at the few skate parks offered by Houston.  Paul hopes to graduate with a BS in electical engineering in the fall of 2005.
+
+
+
+</para>
+</section>
+  </content>
+  
+</document>

@@ -1,0 +1,58 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:md="http://cnx.rice.edu/mdml">
+  <title>Iris Recognition Results and Conclusions</title>
+  <metadata><md:content-id>undefined</md:content-id><md:title/><md:uuid>6524a3be-f805-470f-8b35-0d7304ddcf83</md:uuid>
+</metadata>
+
+  <content>
+     <section id="sec1">
+      <title>Iris Recognition Results</title>
+    <para id="para1">
+Our implementation of the iris recognition algorithm is broken up into several components, each of which has its strengths and weaknesses. 
+    </para>  
+    <para id="para2">
+The pupil recognition algorithm appears to be 98% effective in detecting the pupil center when tested against a database of 50 images. This is due to the extremely uniform black color of the pupil and strong contrast to the iris and virtuall all other features in the image. Although the assumptions that the algorithm is founded break down in extreme cases, such as when there are other large black spots in the image, these cases can be detected by other means and discarded.
+</para>  
+
+<para id="para3">
+The iris detection algorithm proved to be rather hit-or-miss. In it's current form, it has a 50% success rate in detecting the iris correctly within an image of the eye. This large error lies mostly in the 'guessing' scheme used to make an initial prediction about the radius of the iris. This guessing scheme can be expanded to make higher precision, higher accuracy guesses at the expensive of algorithm execution speed. Also, the iris-sclera transition boundary of the eye can be more intensively processed by a multi-scale edge detection kernel (the implementation in this project uses a single-scale Haar wavelet kernel).
+</para>
+
+<figure id="eye_pic1">
+<media id="idp6167360" alt=""><image src="../../media/SameSuccess100.png" mime-type="image/png"/></media>
+<caption>
+Six different images of the same eye. These were 100% verified to be the same eye for every unique combination of 2 images.
+</caption>
+</figure>
+
+<figure id="eye_pic2">
+<media id="idm525088" alt=""><image src="../../media/SameSuccess80.png" mime-type="image/png"/></media>
+<caption>
+Six different images of the anothe eye. These were 80% verified to be the same eye for every unique combination of 2 images. The error is due to the presense of eyelids and eyelashes in the image.
+</caption>
+</figure>
+
+<para id="para4">
+The Gabor correlation algorithm proved to be very robust. Our implementation used a 1-D, single frequency, single phase Gabor wavelet to generate the iris codes. The threshold for statistical independence (Hamming Distance) between two iris codes was experimentally determined to be 0.3. During testing, we chose a set of images that reliably passed the other stages of the iris detection process (find pupil, find iris) so that we could test the functionality of the Gabor filter independent of errors accrued in earlier stages. Because of long computation times, small datasets of 6 images were compiled, and all combinations of two images within each dataset were compared to another. In one test (Figure 1), 100% of all combinations of 6 eyes of the same person registered as correctly positive. In another run of this same test on a different person (Figure 2), 80% of combinations of 6 eyes registered as correctly positive. This is due to the fact that our algorithm does not mask out regions of the iris obscured by eyelashes and eyelids. The second set of images had substantially more interference from eyelids, which produced errors in the Gabor codes. The first set of images is less prone to these defects, and so passes the tests better.
+</para>
+
+</section>
+
+     <section id="sec2">
+     <title>The Future of Iris Codes</title>
+     <para id="para5">
+As evident from the results, it is possible to create, relatively easily, an algorithm to detect and recognize irises to a calculated degree of confidence.  In addition, after a little research (hint: google "<term>John Daugman</term>"), it is clear that more sophisticated algorithms exist that give zero false acceptance--something many other authentication techniques simply cannot deliver.  One specific algorithm patented by Dr. Daugman, is currently the most accepted and widely used in iris code recognition systems. This embodiment of the algorithm uses robust algorithms in each part of the implementation (pupil and iris detection, masking, Gabor correlation), and has experimentally proven to be extremely accurate. In the largest deployment of iris recognition systems, this algorithm does 3.8 billion comparisons a day in the United Arab Emirates (<link url="http://www.cl.cam.ac.uk/users/jgd1000/deployments.html">story here</link>).
+
+<figure id="eye_pic3">
+	<media id="idp9492368" alt=""><image src="../../media/intro.jpg" mime-type="image/jpeg"/></media>
+      <caption>
+	Iris Code by John Daugman  <link url="http://www.cl.cam.ac.uk/users/jgd1000/iris_recognition.html">check it out here</link>
+      </caption>
+    </figure>  
+
+Why, then, is iris recognition not more common?  The answer seems simple: money.  In order to implement iris recognition it is necessary to have a computer and an adjustable camera to accomodate people of differing stature.  Obviously this is more costly on a large scale than encoded cards or memorized PIN's.  However, as identity theft becomes more widespread and restricted access premises seek more powerful security solutions, iris recognition systems will become worth the cost.
+
+     </para>  
+     </section>
+  </content>
+  
+</document>

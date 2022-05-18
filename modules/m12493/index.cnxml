@@ -1,0 +1,421 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:md="http://cnx.rice.edu/mdml">
+  <title>Iris Recognition: Gabor Filtering</title>
+  <metadata><md:content-id>undefined</md:content-id><md:title/><md:uuid>c2623be5-27fc-4c12-9831-3429580ae27d</md:uuid>
+</metadata>
+
+  <content>
+    <section id="gabor">
+       <title>Gabor Wavelets</title>
+       		<para id="para1">
+       			To understand the concept of Gabor filtering, we must first start with Gabor wavelets.
+       			Gabor wavelets are formed from two components, a complex sinusoidal carrier and a Gaussian envelope.
+       			<m:math display="block"><m:mi>g</m:mi><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>,</m:mo><m:mi>y</m:mi><m:mo>)</m:mo></m:mrow><m:mo>=</m:mo><m:mi>s</m:mi><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>,</m:mo><m:mi>y</m:mi><m:mo>)</m:mo></m:mrow><m:msub><m:mi>w</m:mi><m:mi>r</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>,</m:mo><m:mi>y</m:mi><m:mo>)</m:mo></m:mrow></m:math>
+       			The complex carrier takes the form:
+       			<m:math display="block"><m:mi>s</m:mi><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>,</m:mo><m:mi>y</m:mi><m:mo>)</m:mo></m:mrow><m:mo>=</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:mrow><m:mo>(</m:mo><m:mn>2</m:mn><m:mi>π</m:mi><m:mrow><m:mo>(</m:mo><m:msub><m:mi>u</m:mi><m:mn>0</m:mn></m:msub><m:mi>x</m:mi><m:mo>+</m:mo><m:msub><m:mi>v</m:mi><m:mn>0</m:mn></m:msub><m:mi>y</m:mi><m:mo>)</m:mo></m:mrow><m:mo>+</m:mo><m:mi>P</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:msup><m:mo/></m:math>
+       		
+			We can visualize the real and imaginary parts of this function seperately as shown in this figure.
+			
+			<figure id="realimag">
+			<subfigure id="real">
+			<media id="idm12744592" alt=""><image src="../../media/real.png" mime-type="image/png"/></media>
+			<caption>Real Part</caption>
+			</subfigure>
+			<subfigure id="imag">
+			<media id="idm12742432" alt=""><image src="../../media/imag.png" mime-type="image/png"/></media>
+			<caption>Imaginary Part</caption>
+			</subfigure>
+                        <caption><link url="http://mplab.ucsd.edu/tutorials/pdfs/Gabor.pdf">Image Source</link>
+                        </caption>
+			</figure>
+			
+			The real part of the function is given by:
+			<m:math display="block">
+			<m:mstyle>
+			<m:mi>R</m:mi>
+			<m:mi>e</m:mi>
+			<m:mrow>
+				<m:mo>(</m:mo>
+				<m:mi>s</m:mi>
+				<m:mrow>
+				<m:mo>(</m:mo>
+				<m:mi>x</m:mi>
+				<m:mo>,</m:mo>
+				<m:mi>y</m:mi>
+				<m:mo>)</m:mo>
+				</m:mrow>
+				<m:mo>)</m:mo>
+			</m:mrow>
+			<m:mo>=</m:mo>
+			<m:mo>cos</m:mo>
+			<m:mrow>
+				<m:mo>(</m:mo>
+				<m:mn>2</m:mn>
+				<m:mi>π</m:mi>
+				<m:mrow>
+				<m:mo>(</m:mo>
+				<m:msub>
+				<m:mi>u</m:mi>
+				<m:mn>0</m:mn>
+				</m:msub>
+				<m:mi>x</m:mi>
+				<m:mo>+</m:mo>
+				<m:msub>
+				<m:mi>v</m:mi>
+				<m:mn>0</m:mn>
+				</m:msub>
+				<m:mi>y</m:mi>
+				<m:mo>)</m:mo>
+				</m:mrow>
+				<m:mo>+</m:mo>
+				<m:mi>P</m:mi>
+				<m:mo>)</m:mo>
+			</m:mrow>
+			</m:mstyle>
+			</m:math>
+			and the imaginary:
+			<m:math display="block">
+			<m:mstyle>
+			<m:mi>I</m:mi>
+			<m:mi>m</m:mi>
+			<m:mrow>
+				<m:mo>(</m:mo>
+				<m:mi>s</m:mi>
+				<m:mrow>
+				<m:mo>(</m:mo>
+				<m:mi>x</m:mi>
+				<m:mo>,</m:mo>
+				<m:mi>y</m:mi>
+				<m:mo>)</m:mo>
+				</m:mrow>
+				<m:mo>)</m:mo>
+			</m:mrow>
+			<m:mo>=</m:mo>
+			<m:mo>sin</m:mo>
+			<m:mrow>
+				<m:mo>(</m:mo>
+				<m:mn>2</m:mn>
+				<m:mi>π</m:mi>
+				<m:mrow>
+				<m:mo>(</m:mo>
+				<m:msub>
+				<m:mi>u</m:mi>
+				<m:mn>0</m:mn>
+				</m:msub>
+				<m:mi>x</m:mi>
+				<m:mo>+</m:mo>
+				<m:msub>
+				<m:mi>v</m:mi>
+				<m:mn>0</m:mn>
+				</m:msub>
+				<m:mi>y</m:mi>
+				<m:mo>)</m:mo>
+				</m:mrow>
+				<m:mo>+</m:mo>
+				<m:mi>P</m:mi>
+				<m:mo>)</m:mo>
+			</m:mrow>
+			</m:mstyle>
+			</m:math>
+			The parameters <m:math display="inline"><m:mrow><m:msub><m:mi>u</m:mi><m:mn>0</m:mn></m:msub></m:mrow></m:math>
+			and <m:math display="inline"><m:mrow><m:msub><m:mi>v</m:mi><m:mn>0</m:mn></m:msub></m:mrow></m:math>
+			represent the frequency of the horizontal and vertical sinusoids respectively.  
+			<m:math display="inline"><m:mrow><m:mi>P</m:mi></m:mrow></m:math> respresents an arbitrary phase shift.
+			
+      </para>
+      <para id="para2">
+      	The second component of a gabor wavelet is its envelope.  The resulting wavelet is the product of the sinusoidal carrier and this envelope.  The envelope has a gaussian profile and is described by the following equation:
+	
+	<figure id="gprofile">
+	<media id="idm5379728" alt=""><image src="../../media/gauss.png" mime-type="image/png"/></media>
+	<caption>Gaussian Envelope</caption>
+	</figure>
+	
+	<m:math display="block">
+	<m:mstyle>
+	<m:mi>g</m:mi>
+	<m:mrow>
+	<m:mo>(</m:mo>
+	<m:mi>x</m:mi>
+	<m:mo>,</m:mo>
+	<m:mi>y</m:mi>
+	<m:mo>)</m:mo>
+	</m:mrow>
+	<m:mo>=</m:mo>
+	<m:mi>K</m:mi>
+	<m:msup>
+	<m:mi>e</m:mi>
+	<m:mrow>
+		<m:mo>-</m:mo>
+		<m:mi>π</m:mi>
+		<m:mrow>
+		<m:mo>(</m:mo>
+		<m:msup>
+		<m:mi>a</m:mi>
+		<m:mn>2</m:mn>
+		</m:msup>
+		<m:mrow>
+		<m:msubsup>
+		<m:mrow>
+			<m:mo>(</m:mo>
+			<m:mi>x</m:mi>
+			<m:mo>-</m:mo>
+			<m:msub>
+			<m:mi>x</m:mi>
+			<m:mn>0</m:mn>
+			</m:msub>
+			<m:mo>)</m:mo>
+		</m:mrow>
+		<m:mi>r</m:mi>
+		<m:mn>2</m:mn>
+		</m:msubsup>
+		</m:mrow>
+		<m:mo>+</m:mo>
+		<m:msup>
+	
+		<m:mi>b</m:mi>
+	
+		<m:mn>2</m:mn>
+		</m:msup>
+		<m:mrow>
+		<m:msubsup>
+		<m:mrow>
+			<m:mo>(</m:mo>
+			<m:mi>y</m:mi>
+			<m:mo>-</m:mo>
+			<m:msub>
+			<m:mi>y</m:mi>
+			<m:mn>0</m:mn>
+			</m:msub>
+			<m:mo>)</m:mo>
+		</m:mrow>
+		<m:mi>r</m:mi>
+		<m:mn>2</m:mn>
+		</m:msubsup>
+		</m:mrow>
+		<m:mo>)</m:mo>
+		</m:mrow>
+	</m:mrow>
+	</m:msup>
+	<m:mo/>
+	</m:mstyle>
+	</m:math>
+	where:
+	<m:math display="block">
+	<m:mstyle>
+	<m:msub>
+	<m:mrow>
+		<m:mo>(</m:mo>
+		<m:mi>x</m:mi>
+		<m:mo>-</m:mo>
+		<m:msub>
+		<m:mi>x</m:mi>
+		<m:mn>0</m:mn>
+		</m:msub>
+		<m:mo>)</m:mo>
+	</m:mrow>
+	<m:mi>r</m:mi>
+	</m:msub>
+	<m:mo>=</m:mo>
+	<m:mrow>
+	<m:mo>(</m:mo>
+	<m:mi>x</m:mi>
+	<m:mo>-</m:mo>
+	<m:msub>
+		<m:mi>x</m:mi>
+		<m:mn>0</m:mn>
+	</m:msub>
+	<m:mo>)</m:mo>
+	</m:mrow>
+	
+	<m:mo>cos</m:mo>
+	
+	<m:mrow>
+	<m:mo>(</m:mo>
+	<m:mi>θ</m:mi>
+	<m:mo>)</m:mo>
+	</m:mrow>
+	<m:mo>+</m:mo>
+	<m:mrow>
+	<m:mo>(</m:mo>
+	<m:mi>y</m:mi>
+	<m:mo>-</m:mo>
+	<m:msub>
+		<m:mi>y</m:mi>
+		<m:mn>0</m:mn>
+	</m:msub>
+	<m:mo>)</m:mo>
+	</m:mrow>
+	<m:mo>sin</m:mo>
+	<m:mrow>
+	<m:mo>(</m:mo>
+	<m:mi>θ</m:mi>
+	<m:mo>)</m:mo>
+	</m:mrow>
+	</m:mstyle>
+	</m:math>
+	<m:math display="block">
+	<m:mstyle>
+	<m:msub>
+	<m:mrow>
+		<m:mo>(</m:mo>
+		<m:mi>y</m:mi>
+		<m:mo>-</m:mo>
+		<m:msub>
+		<m:mi>y</m:mi>
+		<m:mn>0</m:mn>
+		</m:msub>
+		<m:mo>)</m:mo>
+	</m:mrow>
+	<m:mi>r</m:mi>
+	</m:msub>
+	<m:mo>=</m:mo>
+	<m:mo>-</m:mo>
+	<m:mrow>
+	<m:mo>(</m:mo>
+	<m:mi>x</m:mi>
+	<m:mo>-</m:mo>
+	
+	<m:msub>
+		<m:mi>x</m:mi>
+		<m:mn>0</m:mn>
+	</m:msub>
+	
+	<m:mo>)</m:mo>
+	</m:mrow>
+	<m:mo>sin</m:mo>
+	<m:mrow>
+	<m:mo>(</m:mo>
+	<m:mi>θ</m:mi>
+	<m:mo>)</m:mo>
+	</m:mrow>
+	<m:mo>+</m:mo>
+	<m:mrow>
+	<m:mo>(</m:mo>
+	<m:mi>y</m:mi>
+	<m:mo>-</m:mo>
+	<m:msub>
+		<m:mi>y</m:mi>
+		<m:mn>0</m:mn>
+	</m:msub>
+	<m:mo>)</m:mo>
+	</m:mrow>
+	<m:mo>cos</m:mo>
+	<m:mrow>
+	<m:mo>(</m:mo>
+	<m:mi>θ</m:mi>
+	<m:mo>)</m:mo>
+	</m:mrow>
+	</m:mstyle>
+	</m:math>
+	
+	The parameters used above are <m:math display="inline"><m:mrow><m:mi>K</m:mi></m:mrow></m:math> - a scaling constant
+	<m:math display="inline"><m:mrow><m:mo>(</m:mo><m:mi>a</m:mi><m:mo>,</m:mo><m:mi>b</m:mi><m:mo>)</m:mo></m:mrow></m:math>
+	 - envelope axis scaling constants,
+	<m:math display="inline"><m:mrow><m:mi>θ</m:mi></m:mrow></m:math> - envelope rotation constant,
+	
+	<m:math display="inline"><m:mrow><m:mo>(</m:mo><m:msub><m:mi>x</m:mi><m:mn>0</m:mn></m:msub><m:mo>,</m:mo><m:msub><m:mi>y</m:mi><m:mn>0</m:mn></m:msub>
+	<m:mo>)</m:mo></m:mrow></m:math> - Gausian envelope peak.
+	</para>
+	<para id="para3">
+	To put it all together, we multiply <m:math display="inline"><m:mi>s</m:mi><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>,</m:mo>
+	<m:mi>y</m:mi><m:mo>)</m:mo></m:mrow></m:math> by 
+	<m:math display="inline"><m:msub><m:mi>w</m:mi><m:mi>r</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>,</m:mo><m:mi>y</m:mi>
+	<m:mo>)</m:mo></m:mrow></m:math>.  This produces a wavelet like this one:
+
+	<figure id="together">
+	<media id="idm2959072" alt=""><image src="../../media/gabor.png" mime-type="image/png"/></media>
+	<caption>1D Gabor Wavelet</caption>
+	</figure>
+	
+      </para>
+    </section>
+    <section id="filter">
+    	<title>Generating an Iris Code</title>
+	<para id="para4">
+	Now that we have Gabor wavelets, lets do something interesting with them.
+	Lets start with an image of an eye and then unroll it (map it to cartesian coordinates) so we have something like the following:
+	<figure id="rollun">
+			<subfigure id="roll">
+			<media id="idm2304" alt=""><image src="../../media/rolled.png" mime-type="image/png"/></media>
+			<caption>Image of Eye</caption>
+			</subfigure>
+			<subfigure id="unrolled">
+			<media id="idm4368576" alt=""><image src="../../media/unrolled.png" mime-type="image/png"/></media>
+			<caption>"Unrolled" Iris</caption>
+			</subfigure>
+			</figure>
+	What we want to do is somehow extract a set of unique features from this iris and then store them.  That way
+	if we are presented with an unknown iris, we can compare the stored features to the 
+	features in the unknown iris to see if they are the same.  We'll call this set of features an "Iris Code."
+	</para>
+	<para id="para5">
+	Any given iris has a unique texture that is generated through a random
+process before birth.  Filters based on Gabor wavelets turn out to be very good
+at detecting patterns in images.  We'll use a fixed frequency 1D Gabor filter to
+look for patterns in our unrolled image.  First, we'll take a one pixel wide
+column from our unrolled image and convolve it with a 1D Gabor wavelet.  Because
+the Gabor filter is complex, the result will have a real and imaginary part
+which are treated seperately.  We only want to store a small number of bits for
+each iris code, so the real and imaginary parts are each quantized.  If a given
+value in the result vector is greater than zero, a one is stored; otherwise zero
+is stored.  Once all the columns of the image have been filtered and quantized,
+we can form a new black and white image by putting all of the columns side by
+side.  The real and imaginary parts of this image (a matrix), the iris code, are
+shown here:
+	<figure orient="vertical" id="iriscode">
+	<subfigure id="rcode">
+	<media id="idm4362784" alt=""><image src="../../media/rcode.png" mime-type="image/png"/></media>
+	<caption>Real Part of Iris Code</caption>
+	</subfigure>
+	<subfigure id="icode">
+	<media id="idm3671328" alt=""><image src="../../media/icode.png" mime-type="image/png"/></media>
+	<caption>Imaginary Part of Iris Code</caption>
+	</subfigure>
+	</figure>
+	Now that we have an iris code, we can store it in a database, file or even on a card.  What happens though if we want to compare two iris codes and decide how similar they are?  
+	</para>
+    </section>
+    <section id="idm3669040">
+    <title>Comparing Iris Codes</title>
+	<para id="para6">
+	The problem of comparing iris codes arises when we want to authenticate a new user.  The user's eye is
+	 photographed and the iris code produced from the image.  It would be nice to be able to compare the new code 
+	 to a database stored codes to see if this user is allowed or to see who they are.  To perform this task, 
+	 we'll attempt to measure the Hamming distance between two iris codes.  The Hamming distance between any two 
+	 equal length binary vectors is simply the number of bit positions in which they differ divided by the length 
+	 of the vectors.  This way, two identical vectors have distance 0 while two completely different vectors have 
+	 distance 1.  Its worth noting that on average two random vectors will differ in half their bits giving a  
+	 Hamming distance of 0.5.  The Hamming distance is mathematically defined in this equation:
+	 <m:math display="block">
+	<m:mi>D</m:mi>
+	<m:mo>=</m:mo>
+	
+	<m:mfrac>
+	<m:mrow>
+		<m:mi>A</m:mi>
+		<m:mo>⊕</m:mo>
+		<m:mi>B</m:mi>
+	</m:mrow>
+	<m:mrow>
+		<m:mtext>length(A)</m:mtext>
+	</m:mrow>
+	</m:mfrac>
+	
+	<m:mo/>
+	</m:math>
+	</para>
+	<para id="para7">
+	In theory, two iris codes independently generated from the same iris will be exactly the same.  In reality
+	though, this doesn't happen vary often for reasons such as imperfect cameras, lighting or small rotational 
+	errors.  To account for these slight inconsistencies, two iris codes are compared and if the distance between 
+	them is below a certain threshold we'll call them a match.  This is based on the idea of statistical 
+	independance.  The iris is random enough such that iris codes from different eyes will be statistically
+	independent (ie: have a distance larger than the threshold) and therefore only iris codes of the same eye
+	will fail the test of statisical independance.  Empirical studies with millions of images have supported
+	this assertion.  In fact, when these studies used the threshold used in our method (.3) false positive rates
+	fell below 1 in 10 million.
+	</para>
+    </section>  
+  </content>
+  
+</document>
